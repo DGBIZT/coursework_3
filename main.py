@@ -1,16 +1,87 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+import requests
+import json
+import time
+import os
+import pandas as pd
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+def get_employers():
+    ''' Функция для получения всех работодателей:'''
+    employers = []
+    req = requests.get('https://api.hh.ru/employers')
+    data = req.content.decode()
+    count_of_employers = json.loads(data)['found']
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    for i in range(1, count_of_employers + 1):
+        try:
+            req = requests.get(f'https://api.hh.ru/employers/{i}')
+            data = req.content.decode()
+            js_obj = json.loads(data)
+            employers.append([js_obj['id'], js_obj['name']])
+            print(f"Обработано: {i}/{count_of_employers}")
+
+            # Пауза для соблюдения ограничений API
+            if i % 200 == 0:
+                time.sleep(0.2)
+
+        except:
+            continue
+
+    return employers
+
+
+
+
+def get_vacancies(employer_id, area_id):
+    '''Функция для поиска вакансий конкретного работодателя:'''
+    params = {
+        'employer_id': employer_id,
+        'area': area_id,
+        'page': 0,
+        'per_page': 100
+    }
+
+    all_vacancies = []
+    while True:
+        req = requests.get('https://api.hh.ru/vacancies', params=params)
+        data = req.content.decode()
+        js_obj = json.loads(data)
+
+        all_vacancies.extend(js_obj['items'])
+
+        if params['page'] >= js_obj['pages'] - 1:
+            break
+
+        params['page'] += 1
+        time.sleep(0.2)  # Пауза между запросами
+
+    return all_vacancies
+
+# Получаем список всех работодателей
+employers = get_employers()
+
+# Выбираем конкретного работодателя (например, 2ГИС)
+employer_id = 64174
+
+# ID России для поиска по всей стране
+area_id = 113
+
+# Получаем все вакансии работодателя
+vacancies = get_vacancies(employer_id, area_id)
+
+# Сохраняем результаты в Excel
+data = []
+for vacancy in vacancies:
+    # Извлекаем необходимые поля
+    data.append({
+        'id': vacancy['id'],
+        'name': vacancy['name'],
+        'salary_from': vacancy['salary']['from'] if vacancy['salary'] else None,
+        'salary_to': vacancy['salary']['to'] if vacancy['salary'] else None,
+        'area': vacancy['area']['name'],
+        'employer': vacancy['employer']['name'],
+        'url': vacancy['alternate_url']
+    })
+
+df = pd.DataFrame(data)
+df.to_excel('vacancies.xlsx', index=False)
