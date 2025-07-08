@@ -85,3 +85,72 @@ for vacancy in vacancies:
 
 df = pd.DataFrame(data)
 df.to_excel('vacancies.xlsx', index=False)
+
+
+'''
+Пример реализации
+import requests
+import json
+
+# Ваши учетные данные
+CLIENT_ID = 'ваш_client_id'
+CLIENT_SECRET = 'ваш_client_secret'
+
+# Получение токена доступа
+def get_access_token():
+    url = 'https://hh.ru/oauth/token'
+    data = {
+        'grant_type': 'client_credentials',
+        'client_id': CLIENT_ID,
+        'client_secret': CLIENT_SECRET
+    }
+    response = requests.post(url, data=data)
+    token = response.json().get('access_token')
+    return token
+
+# Получение вакансий компании
+def get_company_vacancies(company_id, token):
+    url = f'https://api.hh.ru/companies/{company_id}/vacancies'
+    headers = {'Authorization': f'Bearer {token}'}
+    response = requests.get(url, headers=headers)
+    return response.json()
+
+# Список интересных компаний
+companies = [
+    {'name': 'Яндекс', 'id': 143},
+    {'name': 'Сбер', 'id': 2293},
+    {'name': 'Тинькофф', 'id': 10088},
+    {'name': 'Mail.ru Group', 'id': 152},
+    {'name': 'VK', 'id': 2789},
+    {'name': 'Альфа-Банк', 'id': 1008},
+    {'name': 'МТС', 'id': 1009},
+    {'name': 'Ростелеком', 'id': 1010},
+    {'name': 'Лаборатория Касперского', 'id': 1011},
+    {'name': '1С', 'id': 1012}
+]
+
+# Основной код
+def main():
+    token = get_access_token()
+    
+    for company in companies:
+        print(f"\nКомпания: {company['name']}")
+        vacancies = get_company_vacancies(company['id'], token)
+        
+        for vacancy in vacancies['items']:
+            print(f"  Вакансия: {vacancy['name']}")
+            print(f"  Зарплата: {vacancy.get('salary', {}).get('from')} - {vacancy.get('salary', {}).get('to')} руб.")
+            print(f"  Город: {vacancy['area']['name']}")
+            print(f"  Ссылка: {vacancy['alternate_url']}\n")
+
+if __name__ == '__main__':
+    main()
+Объяснение кода
+Получение токена - функция get_access_token() получает токен для доступа к API.
+
+Получение вакансий - функция get_company_vacancies() запрашивает данные о вакансиях конкретной компании.
+
+Список компаний - в массиве companies указаны ID и названия выбранных компаний.
+
+Основной код - функция main() объединяет все компоненты и выводит информацию о вакансиях.
+'''
