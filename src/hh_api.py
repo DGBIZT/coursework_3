@@ -1,8 +1,6 @@
-
 # класс, который делает запросы на api HH
 import requests
 
-# companies  = [78638, 3529, 3107303, 141108, 3776, 9202177, 5974204, 10280369, 4480863, 7944]
 companies  = [
     {'name': 'Т-Банк', 'id': 78638},
     {'name': 'СБЕР', 'id': 3529},
@@ -23,8 +21,6 @@ def hh_api():
     for i in companies :
         vacancies_list[i["id"]] = (requests.get(f'{__url}{i['id']}').json()['items'])
     return vacancies_list
-
-
 
 
 def get_hh_vacancies(company_id):
