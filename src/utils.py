@@ -177,7 +177,7 @@ def main():
             # Создаем таблицы
             create_tables(connection)
 
-            # Пример вставки данных
+            # Пример данных для демонстрации
             sample_company = {
                 'company_id': 'comp123',
                 'name': 'ООО "Рога и Копыта"',
@@ -187,10 +187,21 @@ def main():
                 'description': 'Описание компании'
             }
 
+            # Сначала вставляем компанию
+            insert_company(connection, sample_company)
+
+            # Получаем ID вставленной компании
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                    SELECT id FROM companies 
+                    WHERE company_id = %s
+                """, (sample_company['company_id'],))
+                company_db_id = cursor.fetchone()[0]
+
             sample_vacancy = {
                 'vacancy_id': 'vac123',
                 'name': 'Python Developer',
-                'company_id': 'comp123',  # Связываем с компанией
+                'company_id': company_db_id,  # Используем полученный ID
                 'salary_from': 100000,
                 'salary_to': 150000,
                 'currency': 'RUB',
@@ -199,8 +210,7 @@ def main():
                 'url': 'https://vacancy.ru'
             }
 
-            # Вставляем данные
-            insert_company(connection, sample_company)
+            # Теперь можно вставить вакансию
             insert_vacancy(connection, sample_vacancy)
 
         except Exception as e:
