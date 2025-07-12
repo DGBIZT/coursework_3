@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS vacancies (
     id SERIAL PRIMARY KEY,
     vacancy_id VARCHAR(255) UNIQUE,
     name VARCHAR(255),
+    company_name VARCHAR(255),
     company_id INTEGER REFERENCES companies(id),
     salary_from INTEGER,
     salary_to INTEGER,
@@ -45,7 +46,6 @@ CREATE TABLE IF NOT EXISTS companies (
     name VARCHAR(255),
     website VARCHAR(255),
     logo_url VARCHAR(255),
-    employee_count VARCHAR(100),
     description TEXT
 )
 """
