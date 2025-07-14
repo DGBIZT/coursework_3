@@ -111,8 +111,8 @@ def insert_company(connection, company):
         with connection.cursor() as cursor:
             query = """
             INSERT INTO companies (
-                company_id, name, website, logo_url, employee_count, description
-            ) VALUES (%s, %s, %s, %s, %s, %s)
+                company_id, name, website, logo_url, description
+            ) VALUES (%s, %s, %s, %s, %s)
             ON CONFLICT (company_id) DO NOTHING
             """
             cursor.execute(query, (
@@ -120,7 +120,6 @@ def insert_company(connection, company):
                 company['name'],
                 company.get('website', ''),
                 company.get('logo_url', ''),
-                company.get('employee_count', ''),
                 company.get('description', '')
             ))
             connection.commit()

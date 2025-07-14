@@ -15,77 +15,6 @@ companies  = [
 ]
 
 
-# def get_hh_employer():
-#     """
-#     Функция для получения данных с HH employer
-#     """
-#
-#     # URL-адрес API HeadHunter для поиска вакансий
-#     __url = "https://api.hh.ru/vacancies?employer_id="
-#
-#     # Создаем пустой словарь, куда будем складывать результаты
-#     vacancies_list = {}
-#
-#     # Проходим по списку компаний (предполагается, что список companies уже существует)
-#     for company in companies:
-#         # Берем ID компании из текущего элемента списка
-#         company_id = company["id"]
-#
-#         # Формируем полный URL для запроса
-#         full_url = __url + str(company_id)
-#
-#         # Делаем запрос к API и получаем ответ в формате JSON
-#         response = requests.get(full_url).json()
-#
-#         # Из полученного ответа берем только список вакансий (поле 'items')
-#         vacancies = response['items']
-#
-#         # Сохраняем вакансии в наш словарь, где ключом будет ID компании
-#         vacancies_list[company_id] = vacancies
-#
-#     # Возвращаем итоговый словарь со всеми вакансиями
-#     return vacancies_list
-
-# def hh_api():
-#     """Функция для получения данных с HH employer"""
-#     __url = "https://api.hh.ru/vacancies?employer_id="
-#     vacancies_list = {}
-#     for i in companies :
-#         vacancies_list[i["id"]] = (requests.get(f'{__url}{i['id']}').json()['items'])
-#     return vacancies_list
-
-
-# def get_hh_vacancies(company_id):
-#     """Функция для получения данных с HH vacancies"""
-#     __url = "https://api.hh.ru/vacancies/"
-#     url = f"{__url}?employer_id={company_id}"
-#
-#     try:
-#         response = requests.get(url)
-#         if response.status_code == 200:
-#             data = response.json()
-#             vacancies = []
-#
-#
-#             for vacancy in data.get('items', []):
-#                 vacancies.append({
-#                     'vacancy_id': vacancy.get('id'),  # id вакансии
-#                     'name': vacancy.get('name'),  # Наименование вакансии
-#                     'company_name': vacancy.get('employer', {}).get('name'),  # Организация - имя компании
-#                     'salary_from': (vacancy.get('salary') or {}).get('from'),  # Зарплата от
-#                     'salary_to': (vacancy.get('salary') or {}).get('to'),  # Зарплата до
-#                     'currency': (vacancy.get('salary') or {}).get('currency'),  # Валюта
-#                     'area': vacancy.get('area', {}).get('name'),  # Область
-#                     'description': vacancy.get('description'),  # Описание
-#                     'url': vacancy.get('alternate_url'),  # Ссылка вакансии
-#                 })
-#             return vacancies
-#         else:
-#             print(f"Ошибка запроса: {response.status_code}")
-#             return []
-#     except Exception as e:
-#         print(f"Произошла ошибка: {str(e)}")
-#         return []
 def get_company_info():
     base_url = "https://api.hh.ru/employers/"
     company_details = {}
@@ -148,25 +77,6 @@ def get_company_vacancies():
 
 
 if __name__ == '__main__':
-    # company_info = get_company_info()
-    # # print(company_info)
-    # for company_name, data in company_info.items():
-    #     print(f"ID компании: {data.get('id', 'N/A')}")
-    #     print(f"\nИнформация о компании: {company_name}")
-    #     print(f"Ссылка на работодателя: {data.get('alternate_url', 'N/A')}")
-    #     # Безопасное получение логотипа
-    #     logo_urls = data.get('logo_urls')
-    #     if logo_urls:
-    #         logo_url = logo_urls.get('original', 'Нет логотипа')
-    #     else:
-    #         logo_url = 'Нет логотипа'
-    #     print(f"Логотип: {logo_url}")
-    #     print(f'Информация: {data.get('description', '')}')
-        # print(f"Рейтинг компании: {data.get('employer_rating', {}).get('total_rating', 'Нет рейтинга')}")
-        # print(f"Количество отзывов: {data.get('employer_rating', {}).get('reviews_count', 'N/A')}")
-        # print(f"Доверенный работодатель: {data.get('trusted', 'Нет')}")
-        # print(f"Аккредитованный IT-работодатель: {data.get('accredited_it_employer', 'Нет')}")
-        # print("-" * 40)
 
     # Получаем данные
     vacancies_data = get_company_vacancies()
@@ -205,24 +115,3 @@ if __name__ == '__main__':
             print(f"- Ссылка компании: {employer_url} ")
             print(f"- Заработная плата от: {salary_from}")
             print(f"- Заработная плата до: {salary_to}\n")
-
-
-
-
-
-
-    # Получаем вакансии для конкретной компании
-    # company_id = 4480863  # ID Т-Банка
-    # vacancies = get_hh_vacancies(company_id)
-    #
-    # # Выводим результаты
-    # for vacancy in vacancies:
-    #     print(f"Вакансия: {vacancy['name']}")
-    #     print(f"Компания: {vacancy['company_name']}")
-    #     print(f"Зарплата: от {vacancy['salary_from']} до {vacancy['salary_to']} {vacancy['currency']}")
-    #     print(f"Регион: {vacancy['area']}")
-    #     print(f"Описание: {vacancy['description']}")
-    #     print(f"Ссылка: {vacancy['url']}\n")
-
-    # company = get_hh_employer()
-    # print(company)
