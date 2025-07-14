@@ -80,19 +80,30 @@ def main():
 
                 # Обрабатываем каждую вакансию
                 for vacancy in company_vacancies:
+
+
                     # Проверяем наличие зарплаты
                     salary_info = vacancy.get('salary', {})
+                    if vacancy.get('salary') is not None:
+                        salary_from = vacancy['salary'].get('from', 'Не указано')
+                        salary_to = vacancy['salary'].get('to', 'Не указано')
+                        salary_currency = vacancy['salary'].get('currency', 'Не указано')
+                    else:
+                        salary_from = 'Не указано'
+                        salary_to = 'Не указано'
+                        salary_currency = 'Не указано'
 
                     sample_vacancy = {
-                        'vacancy_id': vacancy.get('id', 'N/A'),
-                        'name': vacancy.get('name', 'Нет названия'),
+                        'vacancy_id': vacancy.get('id', 'N/A'), # id Вакансия
+                        'name': vacancy.get('name', 'Нет названия'), # Наименование вакансии
+                        'company_name': vacancy.get('employer', {}).get('name', 'Нет информации'), # Наименование компании
                         'company_id': company_db_id,  # Используем полученный ID
-                        'salary_from': salary_info.get('from', 'N/A'),
-                        'salary_to': salary_info.get('to', 'N/A'),
-                        'currency': salary_info.get('currency', 'N/A'),
-                        'area': vacancy.get('area', {}).get('name', 'Нет информации'),
-                        'description': vacancy.get('description', 'описание отсутствует'),
-                        'url': vacancy.get('alternate_url', "Нет URL")
+                        'salary_from': salary_from, # Заработная плата от
+                        'salary_to': salary_to, # Заработная плата до
+                        'currency': salary_currency, # Валюта
+                        'area': vacancy.get('area', {}).get('name', 'Нет информации'), # Область
+                        'description': vacancy.get('snippet', {}).get('requirement', 'описание отсутствует'), # Описание вакансии
+                        'url': vacancy.get('alternate_url', "Нет URL") # Ссылка
                     }
 
                     # Вставляем вакансию в БД

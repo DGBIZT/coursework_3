@@ -175,8 +175,8 @@ if __name__ == '__main__':
     for company_name, vacancies in vacancies_data.items():
         print(f"\nВакансии компании {company_name}:")
         for vacancy in vacancies:
-            vacancy_name = vacancy.get('name', 'Нет названия')
-            vacancy_id = vacancy.get('id', 'N/A')
+            vacancy_id = vacancy.get('id', 'N/A')  # id Вакансия
+            vacancy_name = vacancy.get('name', 'Нет названия') # Наименование вакансии
             # Получаем ссылку на работодателя
             # Важно: employer - это отдельный словарь, нужно обращаться к нему правильно
             employer_info = vacancy.get('employer', {})
@@ -184,6 +184,13 @@ if __name__ == '__main__':
             employer_url = employer_info.get('alternate_url', 'Ссылка не найдена')
             employer_id = employer_info.get('id', 'id отсутствует')
             employer_name = employer_info.get('name', 'отсутствует')
+            if vacancy.get('salary') is not None:
+                salary_from = vacancy['salary'].get('from', 'Не указано')
+                salary_to = vacancy['salary'].get('to', 'Не указано')
+            else:
+                salary_from = 'Не указано'
+                salary_to = 'Не указано'
+
             snippet = snippet_info.get('requirement', 'описание отсутствует')
             alternate = vacancy.get('alternate_url', "Нет URL")
             area = vacancy.get('area', {}).get('name', 'Нет информации')
@@ -195,7 +202,9 @@ if __name__ == '__main__':
             print(f"- Описание вакансии: {snippet}")
             print(f"- Номер id компании: {employer_id}")
             print(f"- Наименование компании: {employer_name}")
-            print(f"- Ссылка компании: {employer_url} \n")
+            print(f"- Ссылка компании: {employer_url} ")
+            print(f"- Заработная плата от: {salary_from}")
+            print(f"- Заработная плата до: {salary_to}\n")
 
 
 
