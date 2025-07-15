@@ -107,7 +107,7 @@ if __name__ == '__main__':
 
             print(f"- Наименование вакансии: {vacancy_name}")
             print(f"- Город: {area}")
-            print(f"- Сылка на вакансию: {alternate}")
+            print(f"- Ссылка на вакансию: {alternate}")
             print(f"- id вакансии: {vacancy_id}")
             print(f"- Описание вакансии: {snippet}")
             print(f"- Номер id компании: {employer_id}")

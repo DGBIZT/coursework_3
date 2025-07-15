@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS vacancies (
     id SERIAL PRIMARY KEY,
     vacancy_id VARCHAR(255) UNIQUE,
     name VARCHAR(255),
-    company_name VARCHAR(255),
+    company_name VARCHAR(500),
     company_id INTEGER REFERENCES companies(id),
     salary_from INTEGER,
     salary_to INTEGER,
@@ -133,14 +133,15 @@ def insert_vacancy(connection, vacancy):
         with connection.cursor() as cursor:
             query = """
             INSERT INTO vacancies (
-                vacancy_id, name, company_id, salary_from, salary_to,
+                vacancy_id, name, company_name, company_id, salary_from, salary_to,
                 currency, area, description, url
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ON CONFLICT (vacancy_id) DO NOTHING
             """
             cursor.execute(query, (
                 vacancy.get('vacancy_id'),
                 vacancy.get('name'),
+                vacancy.get('company_name'),
                 vacancy.get('company_id'),  # Теперь используем company_id вместо company_name
                 vacancy.get('salary_from'),
                 vacancy.get('salary_to'),

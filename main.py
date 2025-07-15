@@ -78,8 +78,6 @@ def main():
                 # Получаем только вакансии для текущей компании
                 company_vacancies = all_company_vacancies.get(company_name, [])
 
-                # company_name = list(company_vacancies.keys())[0] Начать с этого момента разбор NULL в столбце
-                # for vacancy in company_vacancies[company_name]:
                 # Обрабатываем каждую вакансию
                 for vacancy in company_vacancies:
 
@@ -87,22 +85,13 @@ def main():
                     # Проверяем наличие зарплаты
                     salary_info = vacancy.get('salary', {})
                     if vacancy.get('salary') is not None:
-                        salary_from = vacancy['salary'].get('from', 0)
-                        salary_to = vacancy['salary'].get('to', 0)
+                        salary_from = vacancy['salary'].get('from', 0) or 0
+                        salary_to = vacancy['salary'].get('to', 0) or 0
                         salary_currency = vacancy['salary'].get('currency', 'Не указано')
                     else:
                         salary_from = 0
                         salary_to = 0
                         salary_currency = 'Не указано'
-
-                    # company_name = (
-                    #     vacancy.get('employer', {}).get('name')
-                    #     if vacancy.get('employer')
-                    #     else list(company_vacancies.keys())[0] # получаем название компании из верхнего уровня
-                    #
-                    #     if company_vacancies
-                    #     else 'Нет информации'
-                    # )
 
                     sample_vacancy = {
                         'vacancy_id': vacancy.get('id', 'N/A'), # id Вакансия
@@ -112,6 +101,7 @@ def main():
                         'salary_from': salary_from, # Заработная плата от
                         'salary_to': salary_to, # Заработная плата до
                         'currency': salary_currency, # Валюта
+                        # 'area': area,
                         'area': vacancy.get('area', {}).get('name', 'Нет информации'), # Область
                         'description': vacancy.get('snippet', {}).get('requirement', 'описание отсутствует'), # Описание вакансии
                         'url': vacancy.get('alternate_url', "Нет URL") # Ссылка
