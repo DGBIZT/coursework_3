@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS companies (
 """
 
 
-def create_connection():
+def create_connection()-> object:
     """Создание подключения к PostgreSQL"""
     connection = None
     try:
@@ -72,7 +72,7 @@ def create_connection():
     return connection
 
 
-def create_database(connection):
+def create_database(connection) -> None:
     """Создание новой базы данных с проверкой существования"""
     try:
         with connection.cursor() as cursor:
@@ -92,7 +92,7 @@ def create_database(connection):
     except OperationalError as e:
         print(f"Ошибка при создании БД: {e}")
 
-def create_tables(connection):
+def create_tables(connection)-> None:
     """Создание таблиц в БД"""
     try:
         with connection.cursor() as cursor:
@@ -105,7 +105,7 @@ def create_tables(connection):
     except OperationalError as e:
         print(f"Ошибка при создании таблиц: {e}")
 
-def insert_company(connection, company):
+def insert_company(connection, company)-> None:
     """Вставка компании в таблицу"""
     try:
         with connection.cursor() as cursor:
@@ -127,7 +127,7 @@ def insert_company(connection, company):
         print(f"Ошибка при вставке данных о компании: {e}")
 
 
-def insert_vacancy(connection, vacancy):
+def insert_vacancy(connection, vacancy) -> None:
     """Вставка вакансии в таблицу"""
     try:
         with connection.cursor() as cursor:
@@ -155,7 +155,12 @@ def insert_vacancy(connection, vacancy):
         print(f"Ошибка при вставке данных: {e}")
 
 
-def main():
+def main()-> None:
+    """
+    функция инициализации системы,
+    которая настраивает базу данных и
+    добавляет примерные данные для демонстрации работы приложения.
+    """
     # Создаем подключение к PostgreSQL
     connection = create_connection()
 

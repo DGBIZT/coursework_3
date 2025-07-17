@@ -15,7 +15,10 @@ companies  = [
 ]
 
 
-def get_company_info():
+def get_company_info() -> dict:
+    """
+    Получает информацию о компаниях с HeadHunter API
+    """
     base_url = "https://api.hh.ru/employers/"
     company_details = {}
 
@@ -38,7 +41,10 @@ def get_company_info():
 
     return company_details
 
-def get_company_vacancies():
+def get_company_vacancies() -> dict:
+    """
+    Получает список вакансий для каждой компании с HeadHunter API
+    """
     # Базовый URL для API HeadHunter
     base_url = "https://api.hh.ru/vacancies?employer_id="
 

@@ -10,7 +10,13 @@ from src.hh_api import get_company_info, get_company_vacancies
 from src.dbmanager import DBManager
 
 
-def main():
+def main() -> None:
+    """
+    Функция main() является точкой входа в приложение и выполняет инициализацию подключения к базе данных PostgreSQL,
+    создание БД и таблиц, а также массовую загрузку информации о компаниях и
+    их вакансиях из внешнего источника в базу данных.
+    """
+
     load_dotenv()
 
     # Параметры подключения к БД

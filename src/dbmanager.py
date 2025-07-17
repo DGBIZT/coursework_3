@@ -51,7 +51,7 @@ class DBManager:
         finally:
             self.connection.commit()
 
-    def execute_query(self, query, params=None):
+    def execute_query(self, query, params=None) -> None:
         """
         Выполнение SQL-запроса
         :param query: SQL-запрос
@@ -60,7 +60,7 @@ class DBManager:
         with self.get_cursor() as cursor:
             cursor.execute(query, params)
 
-    def close(self):
+    def close(self) -> None:
         """
         Закрытие соединения с БД
         """
@@ -70,7 +70,7 @@ class DBManager:
 
         # метод подключения к БД (cur, conn)
 
-    def get_companies_and_vacancies_count(self):
+    def get_companies_and_vacancies_count(self) -> list[dict[str, any]]:
         """
         Получает список всех компаний и количество вакансий у каждой компании
         :return: список кортежей (название компании, количество вакансий)
@@ -109,7 +109,7 @@ class DBManager:
             print(f"Произошла ошибка при получении данных: {e}")
             return []
 
-    def get_all_vacancies(self):
+    def get_all_vacancies(self) -> float:
         """
         Получает список всех вакансий с указанием названия компании,
         названия вакансии, зарплаты и ссылки на вакансию
@@ -158,7 +158,7 @@ class DBManager:
             print(f"Произошла ошибка при получении данных: {e}")
             return []
 
-    def get_avg_salary(self):
+    def get_avg_salary(self) -> float :
         """
         Получает среднюю зарплату по всем вакансиям
         :return: среднее значение зарплаты
@@ -187,7 +187,7 @@ class DBManager:
             print(f"Произошла ошибка при получении средней зарплаты: {e}")
             return 0.0
 
-    def get_vacancies_with_higher_salary(self):
+    def get_vacancies_with_higher_salary(self) -> list[dict[str, any]]:
         """
         Получает список всех вакансий, у которых зарплата выше средней по всем вакансиям
         :return: список словарей с информацией о вакансиях
@@ -240,7 +240,7 @@ class DBManager:
             print(f"Произошла ошибка при получении данных: {e}")
             return []
 
-    def get_vacancies_with_keyword(self, keyword):
+    def get_vacancies_with_keyword(self, keyword) -> list[dict[str, any]] :
         """
         Получает список всех вакансий, в названии которых содержатся переданные слова
         :param keyword: строка с искомым словом/фразой
@@ -297,44 +297,44 @@ class DBManager:
 
 
 if __name__ == "__main__":
-    # print(f"\n***Список кортежей (название компании, количество вакансий)***")
-    # db = DBManager()
-    # try:
-    #     db.connect()
-    #     companies_data = db.get_companies_and_vacancies_count()
-    #
-    #     # Выводим результаты
-    #     for company in companies_data:
-    #         print(f"Компания: {company['company_name']}, "
-    #               f"Количество вакансий: {company['vacancies_count']}")
-    #
-    # finally:
-    #     db.close()
-    # print(f"\n***Список словарей с информацией о вакансиях*** ")
-    # db = DBManager()
-    # try:
-    #     db.connect()
-    #     all_vacancies = db.get_all_vacancies()
-    #
-    #     # Выводим результаты
-    #     for vacancy in all_vacancies:
-    #         print(f"Компания: {vacancy['company_name']}")
-    #         print(f"Вакансия: {vacancy['vacancy_name']}")
-    #         print(f"Зарплата: {vacancy['salary']}")
-    #         print(f"Ссылка: {vacancy['url']}\n")
-    #
-    # finally:
-    #     db.close()
-    #
-    # print(f"\n***Среднее значение зарплаты***")
-    # db = DBManager()
-    # try:
-    #     db.connect()
-    #     avg_salary = db.get_avg_salary()
-    #     print(f"Средняя зарплата по всем вакансиям: {avg_salary:.2f} рублей")
-    #
-    # finally:
-    #     db.close()
+    print(f"\n***Список кортежей (название компании, количество вакансий)***")
+    db = DBManager()
+    try:
+        db.connect()
+        companies_data = db.get_companies_and_vacancies_count()
+
+        # Выводим результаты
+        for company in companies_data:
+            print(f"Компания: {company['company_name']}, "
+                  f"Количество вакансий: {company['vacancies_count']}")
+
+    finally:
+        db.close()
+    print(f"\n***Список словарей с информацией о вакансиях*** ")
+    db = DBManager()
+    try:
+        db.connect()
+        all_vacancies = db.get_all_vacancies()
+
+        # Выводим результаты
+        for vacancy in all_vacancies:
+            print(f"Компания: {vacancy['company_name']}")
+            print(f"Вакансия: {vacancy['vacancy_name']}")
+            print(f"Зарплата: {vacancy['salary']}")
+            print(f"Ссылка: {vacancy['url']}\n")
+
+    finally:
+        db.close()
+
+    print(f"\n***Среднее значение зарплаты***")
+    db = DBManager()
+    try:
+        db.connect()
+        avg_salary = db.get_avg_salary()
+        print(f"Средняя зарплата по всем вакансиям: {avg_salary:.2f} рублей")
+
+    finally:
+        db.close()
 
     print(f"\n***список словарей с информацией о вакансиях, у которых зарплата выше средней по всем вакансиям***")
     db = DBManager()
