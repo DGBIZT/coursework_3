@@ -1,24 +1,25 @@
 # Пишем код создания БД, пишем код создания и наполнения двух таблиц
 # Реализован код автоматического создания БД.
 # Реализован код для создания таблиц в БД.
-            # Создается таблица для организаций.
-            # Создается таблица для вакансий.
-                    # FK
-                    # employeers <-> vacancies
-            # CREAT IF NOT EXISTS
-import psycopg2
-from psycopg2 import sql, OperationalError
+# Создается таблица для организаций.
+# Создается таблица для вакансий.
+# FK
+# employeers <-> vacancies
+# CREAT IF NOT EXISTS
 import os
+
+import psycopg2
 from dotenv import load_dotenv
+from psycopg2 import OperationalError
 
 # Загрузка переменных из .env файла
 load_dotenv()
 
 # Получение параметров из .env файла параметры подключения к БД
-DB_USER = os.getenv('DB_USER', 'default_user')
-DB_PASSWORD = os.getenv('DB_PASSWORD', 'default_password')
-DB_HOST = os.getenv('DB_HOST', 'localhost')
-DB_NAME = os.getenv('DB_NAME', 'hh_vacancies')
+DB_USER = os.getenv("DB_USER", "default_user")
+DB_PASSWORD = os.getenv("DB_PASSWORD", "default_password")
+DB_HOST = os.getenv("DB_HOST", "localhost")
+DB_NAME = os.getenv("DB_NAME", "hh_vacancies")
 
 # SQL-запросы для создания БД и таблиц
 CREATE_DB_QUERY = f"CREATE DATABASE {DB_NAME}"
@@ -51,7 +52,7 @@ CREATE TABLE IF NOT EXISTS companies (
 """
 
 
-def create_connection()-> object:
+def create_connection() -> object:
     """Создание подключения к PostgreSQL"""
     connection = None
     try:
@@ -60,7 +61,7 @@ def create_connection()-> object:
             database="postgres",  # Для создания новой БД используем postgres
             user=DB_USER,
             password=DB_PASSWORD,
-            host=DB_HOST
+            host=DB_HOST,
         )
 
         # Затем включаем autocommit
@@ -77,11 +78,13 @@ def create_database(connection) -> None:
     try:
         with connection.cursor() as cursor:
             # Проверяем существование БД
-            cursor.execute(f"""
+            cursor.execute(
+                f"""
             SELECT 1 
             FROM pg_database 
             WHERE datname = '{DB_NAME}'
-            """)
+            """
+            )
             if cursor.fetchone():
                 print(f"База данных {DB_NAME} уже существует")
                 return
@@ -92,7 +95,8 @@ def create_database(connection) -> None:
     except OperationalError as e:
         print(f"Ошибка при создании БД: {e}")
 
-def create_tables(connection)-> None:
+
+def create_tables(connection) -> None:
     """Создание таблиц в БД"""
     try:
         with connection.cursor() as cursor:
@@ -105,7 +109,8 @@ def create_tables(connection)-> None:
     except OperationalError as e:
         print(f"Ошибка при создании таблиц: {e}")
 
-def insert_company(connection, company)-> None:
+
+def insert_company(connection, company) -> None:
     """Вставка компании в таблицу"""
     try:
         with connection.cursor() as cursor:
@@ -115,13 +120,16 @@ def insert_company(connection, company)-> None:
             ) VALUES (%s, %s, %s, %s, %s)
             ON CONFLICT (company_id) DO NOTHING
             """
-            cursor.execute(query, (
-                company['company_id'],
-                company['name'],
-                company.get('website', ''),
-                company.get('logo_url', ''),
-                company.get('description', '')
-            ))
+            cursor.execute(
+                query,
+                (
+                    company["company_id"],
+                    company["name"],
+                    company.get("website", ""),
+                    company.get("logo_url", ""),
+                    company.get("description", ""),
+                ),
+            )
             connection.commit()
     except OperationalError as e:
         print(f"Ошибка при вставке данных о компании: {e}")
@@ -138,24 +146,27 @@ def insert_vacancy(connection, vacancy) -> None:
             ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ON CONFLICT (vacancy_id) DO NOTHING
             """
-            cursor.execute(query, (
-                vacancy.get('vacancy_id'),
-                vacancy.get('name'),
-                vacancy.get('company_name'),
-                vacancy.get('company_id'),  # Теперь используем company_id вместо company_name
-                vacancy.get('salary_from'),
-                vacancy.get('salary_to'),
-                vacancy.get('currency'),
-                vacancy.get('area'),
-                vacancy.get('description'),
-                vacancy.get('url')
-            ))
+            cursor.execute(
+                query,
+                (
+                    vacancy.get("vacancy_id"),
+                    vacancy.get("name"),
+                    vacancy.get("company_name"),
+                    vacancy.get("company_id"),  # Теперь используем company_id вместо company_name
+                    vacancy.get("salary_from"),
+                    vacancy.get("salary_to"),
+                    vacancy.get("currency"),
+                    vacancy.get("area"),
+                    vacancy.get("description"),
+                    vacancy.get("url"),
+                ),
+            )
             connection.commit()
     except OperationalError as e:
         print(f"Ошибка при вставке данных: {e}")
 
 
-def main()-> None:
+def main() -> None:
     """
     функция инициализации системы,
     которая настраивает базу данных и
@@ -171,12 +182,7 @@ def main()-> None:
             connection.close()  # Закрываем старое соединение
 
             # Переключаемся на созданную БД
-            connection = psycopg2.connect(
-                database=DB_NAME,
-                user=DB_USER,
-                password=DB_PASSWORD,
-                host=DB_HOST
-            )
+            connection = psycopg2.connect(database=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST)
             connection.autocommit = True  # Включаем autocommit здесь
 
             # Создаем таблицы
@@ -184,12 +190,12 @@ def main()-> None:
 
             # Пример данных для демонстрации
             sample_company = {
-                'company_id': 'comp123',
-                'name': 'ООО "Рога и Копыта"',
-                'website': 'https://company.ru',
-                'logo_url': 'https://logo.png',
-                'employee_count': '100-500',
-                'description': 'Описание компании'
+                "company_id": "comp123",
+                "name": 'ООО "Рога и Копыта"',
+                "website": "https://company.ru",
+                "logo_url": "https://logo.png",
+                "employee_count": "100-500",
+                "description": "Описание компании",
             }
 
             # Сначала вставляем компанию
@@ -197,22 +203,25 @@ def main()-> None:
 
             # Получаем ID вставленной компании
             with connection.cursor() as cursor:
-                cursor.execute("""
+                cursor.execute(
+                    """
                     SELECT id FROM companies 
                     WHERE company_id = %s
-                """, (sample_company['company_id'],))
+                """,
+                    (sample_company["company_id"],),
+                )
                 company_db_id = cursor.fetchone()[0]
 
             sample_vacancy = {
-                'vacancy_id': 'vac123',
-                'name': 'Python Developer',
-                'company_id': company_db_id,  # Используем полученный ID
-                'salary_from': 100000,
-                'salary_to': 150000,
-                'currency': 'RUB',
-                'area': 'Москва',
-                'description': 'Описание вакансии',
-                'url': 'https://vacancy.ru'
+                "vacancy_id": "vac123",
+                "name": "Python Developer",
+                "company_id": company_db_id,  # Используем полученный ID
+                "salary_from": 100000,
+                "salary_to": 150000,
+                "currency": "RUB",
+                "area": "Москва",
+                "description": "Описание вакансии",
+                "url": "https://vacancy.ru",
             }
 
             # Теперь можно вставить вакансию
@@ -225,7 +234,5 @@ def main()-> None:
                 connection.close()
 
 
-
 if __name__ == "__main__":
     main()
-

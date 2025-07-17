@@ -1,8 +1,10 @@
-import psycopg2
-from dotenv import load_dotenv
-from psycopg2 import sql, extras
 import os
 from contextlib import contextmanager
+
+import psycopg2
+from dotenv import load_dotenv
+# from psycopg2 import extras, sql
+
 
 class DBManager:
     def __init__(self):
@@ -14,8 +16,8 @@ class DBManager:
         self.dbname = os.getenv("DB_NAME")
         self.user = os.getenv("DB_USER")
         self.password = os.getenv("DB_PASSWORD")
-        self.host = os.getenv("DB_HOST", 'localhost')
-        self.port = os.getenv("DB_PORT", '5432')
+        self.host = os.getenv("DB_HOST", "localhost")
+        self.port = os.getenv("DB_PORT", "5432")
         self.connection = None
 
     def connect(self):
@@ -24,11 +26,7 @@ class DBManager:
         """
         try:
             self.connection = psycopg2.connect(
-                dbname=self.dbname,
-                user=self.user,
-                password=self.password,
-                host=self.host,
-                port=self.port
+                dbname=self.dbname, user=self.user, password=self.password, host=self.host, port=self.port
             )
             print("Подключение к БД установлено")
         except psycopg2.Error as e:
@@ -44,8 +42,10 @@ class DBManager:
                 yield cursor
         except Exception as e:
             print(f"Произошла ошибка: {e}")
-            self.connection.rollback() # это метод, который выполняет откат (отмену) всех изменений, сделанных в рамках текущей транзакции базы данных.
-            # т.е., последовательность операций, которые либо выполняются полностью, либо не выполняются вообще.
+            self.connection.rollback()  # это метод, который выполняет откат (отмену),
+            # всех изменений, сделанных в рамках текущей транзакции базы данных.
+            # т.е., последовательность операций, которые либо выполняются полностью,
+            # либо не выполняются вообще.
 
             raise
         finally:
@@ -76,16 +76,16 @@ class DBManager:
         :return: список кортежей (название компании, количество вакансий)
         """
         query = """
-        SELECT 
-            companies.name, 
+        SELECT
+            companies.name,
             COUNT(vacancies.id) as vacancies_count
-        FROM 
+        FROM
             vacancies
-        LEFT JOIN 
+        LEFT JOIN
             companies ON vacancies.company_id = companies.id
-        GROUP BY 
+        GROUP BY
             companies.id
-        ORDER BY 
+        ORDER BY
             vacancies_count DESC
         """
 
@@ -97,10 +97,7 @@ class DBManager:
                 # Формируем список словарей для более удобного использования
                 companies = []
                 for row in results:
-                    company_dict = {
-                        'company_name': row[0],
-                        'vacancies_count': row[1]
-                    }
+                    company_dict = {"company_name": row[0], "vacancies_count": row[1]}
                     companies.append(company_dict)
 
                 return companies
@@ -109,7 +106,7 @@ class DBManager:
             print(f"Произошла ошибка при получении данных: {e}")
             return []
 
-    def get_all_vacancies(self) -> float:
+    def get_all_vacancies(self) -> list:
         """
         Получает список всех вакансий с указанием названия компании,
         названия вакансии, зарплаты и ссылки на вакансию
@@ -120,13 +117,13 @@ class DBManager:
             companies.name AS company_name,
             vacancies.name AS vacancy_name,
             vacancies.salary_from,
-			vacancies.salary_to,
+            vacancies.salary_to,
             vacancies.url
-        FROM 
+        FROM
             vacancies
-        LEFT JOIN 
+        LEFT JOIN
             companies ON vacancies.company_id = companies.id
-        ORDER BY 
+        ORDER BY
             company_name
         """
 
@@ -142,12 +139,7 @@ class DBManager:
                 # Проходим по каждой строке в результатах запроса
                 for row in results:
                     # Создаем словарь для текущей вакансии
-                    vacancy = {
-                        'company_name': row[0],
-                        'vacancy_name': row[1],
-                        'salary': row[2],
-                        'url': row[4]
-                    }
+                    vacancy = {"company_name": row[0], "vacancy_name": row[1], "salary": row[2], "url": row[4]}
 
                     # Добавляем словарь в общий список
                     vacancies.append(vacancy)
@@ -158,17 +150,17 @@ class DBManager:
             print(f"Произошла ошибка при получении данных: {e}")
             return []
 
-    def get_avg_salary(self) -> float :
+    def get_avg_salary(self) -> float:
         """
         Получает среднюю зарплату по всем вакансиям
         :return: среднее значение зарплаты
         """
         query = """
-        SELECT 
+        SELECT
             AVG(salary_from) AS average_salary
-        FROM 
+        FROM
             vacancies
-        WHERE 
+        WHERE
             salary_from IS NOT NULL
         """
 
@@ -193,22 +185,22 @@ class DBManager:
         :return: список словарей с информацией о вакансиях
         """
         query = """
-        SELECT 
+        SELECT
             companies.name AS company_name,
             vacancies.name AS vacancy_name,
             vacancies.salary_from,
             vacancies.url
-        FROM 
+        FROM
             vacancies
-        LEFT JOIN 
+        LEFT JOIN
             companies ON vacancies.company_id = companies.id
-        WHERE 
+        WHERE
             vacancies.salary_from > (
-                SELECT AVG(salary_from) 
-                FROM vacancies 
+                SELECT AVG(salary_from)
+                FROM vacancies
                 WHERE salary_from IS NOT NULL
             )
-        ORDER BY 
+        ORDER BY
             vacancies.salary_from DESC
         """
 
@@ -225,10 +217,10 @@ class DBManager:
                 for row in results:
                     # Создаем словарь с понятными названиями полей
                     vacancy_info = {
-                        'company_name': row[0],  # название компании
-                        'vacancy_name': row[1],  # название вакансии
-                        'salary': row[2],  # зарплата
-                        'url': row[3]  # ссылка на вакансию
+                        "company_name": row[0],  # название компании
+                        "vacancy_name": row[1],  # название вакансии
+                        "salary": row[2],  # зарплата
+                        "url": row[3],  # ссылка на вакансию
                     }
 
                     # Добавляем созданный словарь в общий список
@@ -240,7 +232,7 @@ class DBManager:
             print(f"Произошла ошибка при получении данных: {e}")
             return []
 
-    def get_vacancies_with_keyword(self, keyword) -> list[dict[str, any]] :
+    def get_vacancies_with_keyword(self, keyword) -> list[dict[str, any]]:
         """
         Получает список всех вакансий, в названии которых содержатся переданные слова
         :param keyword: строка с искомым словом/фразой
@@ -248,23 +240,23 @@ class DBManager:
         """
         # Используем ILIKE для регистронезависимого поиска
         query = """
-        SELECT 
+        SELECT
             companies.name AS company_name,
             vacancies.name AS vacancy_name,
             vacancies.salary_from,
             vacancies.url
-        FROM 
+        FROM
             vacancies
-        LEFT JOIN 
+        LEFT JOIN
             companies ON vacancies.company_id = companies.id
-        WHERE 
+        WHERE
             vacancies.name ILIKE %s
-        ORDER BY 
+        ORDER BY
             company_name
         """
 
         # Формируем шаблон поиска с подстановочными знаками
-        search_pattern = f'%{keyword}%'
+        search_pattern = f"%{keyword}%"
 
         try:
             with self.get_cursor() as cursor:
@@ -280,10 +272,10 @@ class DBManager:
                     # Создаём словарь с информацией о вакансии
                     # Берем данные из строки и присваиваем им понятные имена
                     vacancy = {
-                        'company_name': row[0],  # название компании
-                        'vacancy_name': row[1],  # название вакансии
-                        'salary': row[2],  # зарплата
-                        'url': row[3]  # ссылка на вакансию
+                        "company_name": row[0],  # название компании
+                        "vacancy_name": row[1],  # название вакансии
+                        "salary": row[2],  # зарплата
+                        "url": row[3],  # ссылка на вакансию
                     }
 
                     # Добавляем словарь в общий список
@@ -297,7 +289,7 @@ class DBManager:
 
 
 if __name__ == "__main__":
-    print(f"\n***Список кортежей (название компании, количество вакансий)***")
+    print("\n***Список кортежей (название компании, количество вакансий)***")
     db = DBManager()
     try:
         db.connect()
@@ -305,12 +297,11 @@ if __name__ == "__main__":
 
         # Выводим результаты
         for company in companies_data:
-            print(f"Компания: {company['company_name']}, "
-                  f"Количество вакансий: {company['vacancies_count']}")
+            print(f"Компания: {company['company_name']}, " f"Количество вакансий: {company['vacancies_count']}")
 
     finally:
         db.close()
-    print(f"\n***Список словарей с информацией о вакансиях*** ")
+    print("\n***Список словарей с информацией о вакансиях*** ")
     db = DBManager()
     try:
         db.connect()
@@ -326,7 +317,7 @@ if __name__ == "__main__":
     finally:
         db.close()
 
-    print(f"\n***Среднее значение зарплаты***")
+    print("\n***Среднее значение зарплаты***")
     db = DBManager()
     try:
         db.connect()
@@ -336,7 +327,7 @@ if __name__ == "__main__":
     finally:
         db.close()
 
-    print(f"\n***список словарей с информацией о вакансиях, у которых зарплата выше средней по всем вакансиям***")
+    print("\n***список словарей с информацией о вакансиях, у которых зарплата выше средней по всем вакансиям***")
     db = DBManager()
     try:
         db.connect()
@@ -352,11 +343,11 @@ if __name__ == "__main__":
     finally:
         db.close()
     #
-    print(f"\n***список словарей с информацией о подходящих вакансиях с искомым словом/фразой***")
+    print("\n***список словарей с информацией о подходящих вакансиях с искомым словом/фразой***")
     db = DBManager()
     try:
         db.connect()
-        keyword = 'python'  # искомое слово
+        keyword = "python"  # искомое слово
         matching_vacancies = db.get_vacancies_with_keyword(keyword)
 
         # Выводим результаты
