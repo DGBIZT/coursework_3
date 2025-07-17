@@ -4,7 +4,6 @@ from psycopg2 import sql, extras
 import os
 from contextlib import contextmanager
 
-
 class DBManager:
     def __init__(self):
         """
@@ -60,9 +59,6 @@ class DBManager:
         """
         with self.get_cursor() as cursor:
             cursor.execute(query, params)
-
-
-
 
     def close(self):
         """
@@ -150,7 +146,7 @@ class DBManager:
                         'company_name': row[0],
                         'vacancy_name': row[1],
                         'salary': row[2],
-                        'url': row[3]
+                        'url': row[4]
                     }
 
                     # Добавляем словарь в общий список
@@ -301,44 +297,44 @@ class DBManager:
 
 
 if __name__ == "__main__":
-    print(f"\n***Список кортежей (название компании, количество вакансий)***")
-    db = DBManager()
-    try:
-        db.connect()
-        companies_data = db.get_companies_and_vacancies_count()
-
-        # Выводим результаты
-        for company in companies_data:
-            print(f"Компания: {company['company_name']}, "
-                  f"Количество вакансий: {company['vacancies_count']}")
-
-    finally:
-        db.close()
-    print(f"\n***Список словарей с информацией о вакансиях*** ")
-    db = DBManager()
-    try:
-        db.connect()
-        all_vacancies = db.get_all_vacancies()
-
-        # Выводим результаты
-        for vacancy in all_vacancies:
-            print(f"Компания: {vacancy['company_name']}")
-            print(f"Вакансия: {vacancy['vacancy_name']}")
-            print(f"Зарплата: {vacancy['salary']}")
-            print(f"Ссылка: {vacancy['url']}\n")
-
-    finally:
-        db.close()
-
-    print(f"\n***Среднее значение зарплаты***")
-    db = DBManager()
-    try:
-        db.connect()
-        avg_salary = db.get_avg_salary()
-        print(f"Средняя зарплата по всем вакансиям: {avg_salary:.2f} рублей")
-
-    finally:
-        db.close()
+    # print(f"\n***Список кортежей (название компании, количество вакансий)***")
+    # db = DBManager()
+    # try:
+    #     db.connect()
+    #     companies_data = db.get_companies_and_vacancies_count()
+    #
+    #     # Выводим результаты
+    #     for company in companies_data:
+    #         print(f"Компания: {company['company_name']}, "
+    #               f"Количество вакансий: {company['vacancies_count']}")
+    #
+    # finally:
+    #     db.close()
+    # print(f"\n***Список словарей с информацией о вакансиях*** ")
+    # db = DBManager()
+    # try:
+    #     db.connect()
+    #     all_vacancies = db.get_all_vacancies()
+    #
+    #     # Выводим результаты
+    #     for vacancy in all_vacancies:
+    #         print(f"Компания: {vacancy['company_name']}")
+    #         print(f"Вакансия: {vacancy['vacancy_name']}")
+    #         print(f"Зарплата: {vacancy['salary']}")
+    #         print(f"Ссылка: {vacancy['url']}\n")
+    #
+    # finally:
+    #     db.close()
+    #
+    # print(f"\n***Среднее значение зарплаты***")
+    # db = DBManager()
+    # try:
+    #     db.connect()
+    #     avg_salary = db.get_avg_salary()
+    #     print(f"Средняя зарплата по всем вакансиям: {avg_salary:.2f} рублей")
+    #
+    # finally:
+    #     db.close()
 
     print(f"\n***список словарей с информацией о вакансиях, у которых зарплата выше средней по всем вакансиям***")
     db = DBManager()
@@ -355,7 +351,7 @@ if __name__ == "__main__":
 
     finally:
         db.close()
-
+    #
     print(f"\n***список словарей с информацией о подходящих вакансиях с искомым словом/фразой***")
     db = DBManager()
     try:
