@@ -8,7 +8,8 @@ from dotenv import load_dotenv
 # from psycopg2 import OperationalError, sql
 
 from src.dbmanager import DBManager
-from src.hh_api import get_company_info, get_company_vacancies
+from src.hh_api import get_company_info
+from src.vacancy import get_company_vacancies
 from src.utils import create_connection, create_database, create_tables, insert_company, insert_vacancy
 
 
