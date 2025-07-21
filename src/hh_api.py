@@ -1,5 +1,6 @@
 # класс, который делает запросы на api HH
 import requests
+
 from .other_module import companies
 
 

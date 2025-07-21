@@ -3,6 +3,7 @@ from contextlib import contextmanager
 
 import psycopg2
 from dotenv import load_dotenv
+
 # from psycopg2 import extras, sql
 
 

@@ -1,5 +1,7 @@
 import requests
+
 from .other_module import companies
+
 
 def get_company_vacancies() -> dict:
     """
@@ -40,6 +42,7 @@ def get_company_vacancies() -> dict:
             print(f"Произошла ошибка при обработке компании {company['name']}: {str(e)}")
 
     return all_vacancies
+
 
 if __name__ == "__main__":
     # Получаем данные
